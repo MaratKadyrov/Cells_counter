@@ -1,0 +1,324 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHCells online counter</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+<style>
+    html {
+      font-family: sans-serif;
+    }
+
+    form {
+      max-width: 600px;
+      background: #ccc;
+      margin: 0 auto;
+      padding: 20px;
+      //border: 1px solid black;
+    }
+
+    form ol {
+      padding-left: 0;
+    }
+
+    form li, div > p {
+      background: #eee;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      list-style-type: none;
+      //border: 1px solid black;
+    }
+
+    form img {
+      height: 64px;
+      order: 1;
+    }
+
+    form p {
+      line-height: 32px;
+      padding-left: 10px;
+    }
+
+    form label, form button {
+      background-color: #7F9CCB;
+      padding: 5px 10px;
+      //border-radius: 5px;
+      border: 0px ridge  !important;
+      font-size: 0.8rem;
+      height: auto;
+    }
+
+    form label:hover, form button:hover {
+      background-color: #2D5BA3;
+      color: white;
+    }
+
+    form label:active, form button:active {
+      background-color: #0D3F8F;
+      color: white;
+    }
+
+    div.content_section {
+        visibility : {{show_result}} ;
+    }
+
+    div.box {
+        padding: 20px;
+        position: relative;
+        color: #212529;
+        margin-right: auto;
+        margin-left: auto;
+        max-width: 64rem;
+        background: #eee;
+    }
+
+    .body {
+        margin: 0;
+        font-family: 'PT Sans', sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+        position: relative;
+        background: #ccc;
+    }
+
+    div.header {
+        background: url('/static/resurrecting_cells.jpeg') #ccc center;
+        background-size: cover;
+        color: #fff;
+        font-size: 1.4rem;
+        text-shadow: 2px 2px black;
+    }
+
+    .progress-bar {
+        float: left;
+        width: 0;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        color: #fff;
+        text-align: center;
+        background-color: #7F9CCB;
+        -webkit-box-shadow: inset 0 -1px 0 rgb(0 0 0 / 15%);
+        box-shadow: inset 0 -1px 0 rgb(0 0 0 / 15%);
+        -webkit-transition: width .6s ease;
+        -o-transition: width .6s ease;
+        transition: width .6s ease;
+    }
+
+    .progress-striped .progress-bar, .progress-bar-striped {
+        background-image: -webkit-linear-gradient(
+    45deg
+    ,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-image: linear-gradient(
+    45deg
+    ,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        -webkit-background-size: 40px 40px;
+        background-size: 40px 40px;
+    }
+
+    .progress.active .progress-bar, .progress-bar.active {
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite;
+    }
+
+    .progress {
+        height: 20px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        background-color: #f5f5f5;
+<!--        border-radius: 4px;-->
+        -webkit-box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%);
+        box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%);
+    }
+
+    .span.progress-bar-label {
+        vertical-align: middle;
+    }
+  </style>
+
+<script>
+    var source = new EventSource("/progress");
+    source.onmessage = function(event) {
+        $('.progress-bar').css('width', event.data+'%').attr('aria-valuenow', event.data);
+        $('.progress-bar-label').css('vertical-align', 'middle').text(event.data+'%');
+
+        if(event.data == 100){
+            source.close()
+        }
+    }
+</script>
+</head>
+
+<body class="body">
+
+<div class="box header">
+    <h1 style="text-align: center;"> Подсчёт клеток в камере Фукса&#8209;Розенталя</h1>
+</div>
+
+<div class="box">
+<br>
+<p>
+Подготовить камеру Фукса-Розенталя: убедиться, что ее рабочие поверхности чистые и сухие. При необходимости промыть камеру и покровное стекло 70% раствором спирта и насухо протереть салфеткой. Притереть покровное стекло к камере таким образом, чтобы оно равномерно и полностью покрывало счетную область.
+Отобрать рассчитанный объем с учетом разведение 0.1% раствор трипанового синего в микропробирку или лунку планшета и смешать с соответствующим объемом пробы клеточной суспензии. Тщательно перемешать полученную суспензию пипетированием.
+Отобрать около 20мкл суспензии и заполнить одну или обе счетные области.
+Сделать фотографии больших квадратов, образуемых тройными линиями. От количества квадратов будет зависеть точность полученных результатов.
+</p>
+<p>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+     equationNumbers: {  autoNumber: "AMS"  },
+     extensions: ["AMSmath.js", "AMSsymbols.js", "autobold.js", "color.js"]
+  }
+});
+</script>
+<script type="text/javascript"
+ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+ \(
+X = 5000ND/n, \hbox{ где N - число жизнеспособных клеток, D - коэффициент разведения, n - количество больших квадратов }
+\).
+</p>
+<br>
+
+<h2>Загрузите фотографии</h2>
+<br>
+
+    <form method="post" enctype="multipart/form-data">
+        <div>
+              <label>Степень разведения:
+                <input type="number" id="coeff" name="coeff" placeholder="Введите целое число">
+              </label>
+        </div>
+        <br><br>
+      <div>
+        <label for="image_uploads">Выберите файлы для загрузки (PNG, JPG, JPEG)</label>
+        <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
+      </div>
+      <div class="preview">
+        <p>Нет файлов для загрузки</p>
+      </div>
+      <div>
+        <button name="result_display" onclick="toggle_display()">Отправить</button>
+      </div>
+      <br>
+      <div class="progress" style="max-width: 100%; ">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+          <span class="progress-bar-label">0%</span>
+        </div>
+      </div>
+    </form>
+
+    <script>
+        const input = document.querySelector('input[type=file]');
+        const preview = document.querySelector('.preview');
+
+        input.style.opacity = 0;
+
+        input.addEventListener('change', updateImageDisplay);
+
+        function updateImageDisplay() {
+          while(preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+          }
+
+          const curFiles = input.files;
+          if(curFiles.length === 0) {
+            const para = document.createElement('p');
+            para.textContent = 'Нет выбранных файлов для загрузки';
+            preview.appendChild(para);
+          } else {
+            const list = document.createElement('ol');
+            preview.appendChild(list);
+
+            for(const file of curFiles) {
+              const listItem = document.createElement('li');
+              const para = document.createElement('p');
+
+              if(validFileType(file)) {
+                para.textContent = `${file.name}, ${returnFileSize(file.size)}.`;
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(file);
+
+                listItem.appendChild(image);
+                listItem.appendChild(para);
+              } else {
+                para.textContent = `${file.name}: Неверный тип файла. Измените выбор.`;
+                listItem.appendChild(para);
+              }
+
+              list.appendChild(listItem);
+            }
+          }
+        }
+
+    // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+        const fileTypes = [
+            'image/apng',
+            'image/bmp',
+            'image/gif',
+            'image/jpeg',
+            'image/pjpeg',
+            'image/png',
+            'image/svg+xml',
+            'image/tiff',
+            'image/webp',
+            `image/x-icon`
+        ];
+
+        function validFileType(file) {
+          return fileTypes.includes(file.type);
+        }
+
+        function returnFileSize(number) {
+          if(number < 1024) {
+            return number + 'bytes';
+          } else if(number > 1024 && number < 1048576) {
+            return (number/1024).toFixed(1) + 'KB';
+          } else if(number > 1048576) {
+            return (number/1048576).toFixed(1) + 'MB';
+          }
+        }
+
+        function toggle_display(){
+          el = document.querySelector('.content_section');
+<!--          if(el.style.visibility == 'hidden'){-->
+<!--              el.style.visibility = 'visible'-->
+<!--          }else{-->
+<!--             el.style.visibility = 'hidden'-->
+<!--          }-->
+        }
+    </script>
+
+    <div class="content_section">
+        <br>
+        <h3>Результаты:</h3>
+        <br>
+           {% for info in add_info %}
+            <div>
+                {{info}}
+            </div>
+            {% endfor %}
+        <br>
+        <br>
+        {% if files_list %}
+            {% for file in files_list %}
+            <div>
+                <img src="{{ url_for('display_image', filename=file) }}" alt="разметка" width="auto" height="600">
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+</body>
+</html>
